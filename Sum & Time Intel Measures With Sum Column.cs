@@ -1,9 +1,29 @@
 // For Tabular editor 3 - PBI Measures
 
+/* Creates a SUM measure for every currently selected column and hide the column. */
+    foreach(var c in Selected.Columns)
+    {
+        var newMeasure = c.Table.AddMeasure(
+            c.Name + " Total" ,                    // Name
+            "SUM(" + c.DaxObjectFullName + ")",    // DAX expression
+            c.DisplayFolder                        // Display Folder
+        );
+        
+        // Set the format string on the new measure:
+        newMeasure.FormatString = "#,##0;(#,##0)";
+
+        // Provide some documentation:
+        newMeasure.Description = "sum of column " + c.DaxObjectFullName;
+
+        // Hide the base column:
+        c.IsHidden = true;
+    }
+
+//
 
 /* Then run time intel script on the created measures */
 
-    var dateColumn = "'DimDate'[Date]";
+    var dateColumn = "'Dates'[Date]";
 
     // Creates time intelligence measures for every selected measure:
     foreach(var m in Selected.Measures) {
@@ -17,7 +37,7 @@
         // Previous year:
         m.Table.AddMeasure(
             m.Name + " PY",                                       // Name
-            "CALCULATE(" + m.DaxObjectName + ", DATEADD(" + dateColumn + ", -1 , YEAR))",     // DAX expression
+            "CALCULATE(" + m.DaxObjectName + ", SAMEPERIODLASTYEAR(" + dateColumn + "))",     // DAX expression
             m.DisplayFolder                                        // Display Folder
         );    
         
@@ -31,7 +51,7 @@
         // Year-over-year %:
         m.Table.AddMeasure(
             m.Name + " YoY%",                                       // Name
-            "DIVIDE([" + m.Name + " YoY], [" + m.Name + " PY], 0)",    // DAX expression
+            "DIVIDE([" + m.Name + " YoY], [" + m.Name + " PY])",    // DAX expression
             m.DisplayFolder                                         // Display Folder
         ).FormatString = "0.0 %";                                   // Set format string as percentage
         
@@ -42,21 +62,6 @@
             m.DisplayFolder                                             // Display Folder
         );
         
-        // Quarter-to-date PY:
-        m.Table.AddMeasure(
-            m.Name + " QoQ",                                       // Name
-            "CALCULATE(" +  m.Name + " QTD" + ", DATEADD(" + dateColumn + ", -1 , YEAR))",     // DAX expression
-            m.DisplayFolder                                        // Display Folder
-        );
-        
-        // QoQ %:
-        m.Table.AddMeasure(
-            m.Name + " QoQ%",
-            "DIVIDE([" + m.Name + " QoQ], [" + m.Name + " PY], 0)",
-            m.DisplayFolder
-        ).FormatString = "0.0 %";
-
-
         // Month-to-date:
         m.Table.AddMeasure(
             m.Name + " MTD",                                       // Name
