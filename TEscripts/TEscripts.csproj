@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="TabularEditor">
+      <HintPath>C:\Program Files (x86)\Tabular Editor\TabularEditor.exe</HintPath>
+    </Reference>
+    <Reference Include="TOMWrapper">
+      <HintPath>C:\Users\timos\AppData\Local\TabularEditor\TOMWrapper14.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
